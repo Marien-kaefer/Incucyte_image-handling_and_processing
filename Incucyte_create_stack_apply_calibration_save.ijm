@@ -1,6 +1,9 @@
 /*
 Macro to generate a time series stack from individual images exported from an Incucyte. Image scaling is applied via drop down menu of magnification selection. Option to convert to 16 bit. 
 
+INSTRUCTIONS: 
+Open all images to be included into one stack by selecting them all in the file explorer and dragging them onto the main Fiji window. Then hit "Run" below. 
+
 												- Written by Marie Held [mheldb@liverpool.ac.uk] January 2023
 												  Liverpool CCI (https://cci.liverpool.ac.uk/)
 ________________________________________________________________________________________________________________________

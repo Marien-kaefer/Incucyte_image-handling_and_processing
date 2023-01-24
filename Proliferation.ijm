@@ -1,6 +1,9 @@
 /*
 Macro to Segment cells in phase contract channel and count cells per frame.  
 
+INSTRUCTIONS: 
+Open a phase contrast stack (e.g. created with the Incucyte_create_stack_apply_calibration_save.ijm macro) and hit "run" below. 
+
 												- Written by Marie Held [mheldb@liverpool.ac.uk] January 2023
 												  Liverpool CCI (https://cci.liverpool.ac.uk/)
 ________________________________________________________________________________________________________________________
