@@ -4,13 +4,11 @@ Macro to Segment cells in phase contract channel and count cells per frame. Then
 INSTRUCTIONS: 
 Open a phase contrast stack (e.g. created with the Incucyte_create_stack_apply_calibration_save.ijm macro) and corresponding red fluorescence hit "run" below. 
 
-												- Written by Marie Held [mheldb@liverpool.ac.uk] January 2023
+												- Written by Marie Held [mheldb@liverpool.ac.uk] February 2023
 												  Liverpool CCI (https://cci.liverpool.ac.uk/)
 ________________________________________________________________________________________________________________________
 
 BSD 2-Clause License
-
-Copyright (c) [2022], [Marie Held {mheldb@liverpool.ac.uk}, Image Analyst Liverpool CCI (https://cci.liverpool.ac.uk/)]
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
@@ -30,9 +28,10 @@ Dialog.addChoice("Phase contrast stack", FileList);
 Dialog.addChoice("Fluorescence stack", FileList);
 Dialog.addNumber("Minimum size threshold (um^2 for calibrated images)", 50);
 Dialog.addNumber("Maximum size threshold (um^2 for calibrated images)", 1000);
-//Dialog.addCheckbox("Meaure intensity values for all cells identified in phase images?", true);  
+//Dialog.addCheckbox("Measure intensity values for all cells identified in phase images?", true);  
 //Dialog.addCheckbox("Threshold background removed fluorescence channel?", true); 
-Dialog.addNumber("Lower Threshold", 69);
+Dialog.addMessage("The lower threshold should be determined for the condition that yields the brightest fluorescent signal \n and then used for all images from the same dataset.");
+Dialog.addNumber("Lower Threshold", 50);
 Dialog.addNumber("Upper Threshold", 65535);
 Dialog.show();
 
@@ -66,7 +65,8 @@ background_removal(fluorescenceStack, BG_removed_stack);
 //}
 
 assemble_final_hyperstack(phaseStack, fluorescenceStack, phaseMaskStack, BG_removed_stack, fluorescenseMaskStack, directory_path);
-
+selectWindow(fluorescenceStack); 
+close();
 
 function phase_segmentation_and_count(phaseStack, phaseMaskStack, directory_path,minimum_size_threshold){
 	selectWindow(phaseStack); 	
@@ -90,10 +90,10 @@ function phase_segmentation_and_count(phaseStack, phaseMaskStack, directory_path
 	run("Select None");
 }
 
+/*
 function background_removal(fluorescenceStack, BG_removed_stack){
-	
 	run("Set Measurements...", "mean modal redirect=None decimal=3");
-	selectWindow(fluorescenceStack);	
+	//selectWindow(fluorescenceStack);	
 	//run("Plot Z-axis Profile");
 	selectWindow(fluorescenceStack);	
 	run("Duplicate...", "duplicate"); 
@@ -105,25 +105,35 @@ function background_removal(fluorescenceStack, BG_removed_stack){
 	blurredStack = "Blurred Stack";
 	BG_removed_stack = fluorescenceStack + "-BG-removed";
 	rename(blurredStack);
-	
-	for (i = 1; i <= nSlices; i++) {
-	    selectWindow(blurredStack);
-	    setSlice(i);    
-	    run("Measure");
-	    intensity_value = getResult("Mode", (i-1));
-	    //print("Frame Intensity Value: " + intensity_value);
-	    selectWindow(fluorescenceStack); 
-	    setSlice(i);
-		run("Subtract...", "value=" + intensity_value + " slice");
-	}
-	selectWindow(fluorescenceStack);
+
+	imageCalculator("Subtract create 32-bit stack", fluorescenceStack, blurredStack);
 	rename(BG_removed_stack); 
+	//selectWindow(fluorescenceStack);
+	run("Median...", "radius=1 stack");
 	resetMinAndMax;
 	//run("Plot Z-axis Profile");
 	
 	run("Clear Results");
 	close("Results"); 
 	close(blurredStack); 
+} 
+*/
+
+function background_removal(fluorescenceStack, BG_removed_stack){
+	run("Set Measurements...", "mean modal redirect=None decimal=3");
+	//selectWindow(fluorescenceStack);	
+	//run("Plot Z-axis Profile");
+	selectWindow(fluorescenceStack);	
+	run("Subtract Background...", "rolling=5 stack");
+	run("Duplicate...", "duplicate"); 
+	BG_removed_stack = fluorescenceStack + "-BG-removed";
+	rename(BG_removed_stack);
+	run("Median...", "radius=1 stack");
+	resetMinAndMax;
+	//run("Plot Z-axis Profile");
+	run("Clear Results");
+	close("Results"); 
+
 }
 
 
@@ -145,17 +155,16 @@ function measure_fluorescence_in_phase_ROIs(phaseMaskStack, BG_removed_stack,min
 		run("Select None"); 
 	}
 	saveAs("Results", directory_path + File.separator + fluorescenceStack + "_intensity-measurements.csv");
-
 }
 
 function threshold_preprocessed_fluorescence_channel(BG_removed_stack, fluorescence_lower_threshold, fluorescence_upper_threshold,minimum_size_threshold){
 	selectWindow(BG_removed_stack); 
 	getDimensions(width, height, channels, slices, frames);
 	//run("Threshold...");
-	setSlice(slices); 
+	//setSlice(slices); 
 	setOption("BlackBackground", true);
 	setThreshold(fluorescence_lower_threshold, fluorescence_upper_threshold, "raw");
-	setThreshold(69, 65535, "raw");
+	//setThreshold(69, 65535, "raw");
 	run("Convert to Mask", "background=Dark black create");
 	rename(fluorescenseMaskStack); 
 	run("Set Measurements...", "  redirect=None decimal=3");
@@ -170,7 +179,15 @@ function assemble_final_hyperstack(phaseStack, fluorescenceStack, phaseMaskStack
 	if (BitDepthOfImage != "16"){ 
 			run("16-bit");
 	}
+	selectWindow(BG_removed_stack); 
+	resetMinAndMax; 
+	BitDepthOfImage = bitDepth();
+	if (BitDepthOfImage != "16"){ 
+			run("16-bit");
+	}
 	selectWindow(phaseMaskStack); 
+	run("16-bit");
+	selectWindow(fluorescenseMaskStack);
 	run("16-bit");
 	run("Merge Channels...", "c1=" + phaseStack + " c2=" + fluorescenceStack +" c3=" + phaseMaskStack + " c4=" + BG_removed_stack + " c5=" + fluorescenseMaskStack + " create");
 	setSlice(1); 
@@ -182,13 +199,13 @@ function assemble_final_hyperstack(phaseStack, fluorescenceStack, phaseMaskStack
 	setSlice(3); 
 	run("Cyan"); 
 	//run("Brightness/Contrast...");
-	setMinAndMax(0, 2500);
+	setMinAndMax(0, 2000);
 	setSlice(4); 
 	run("Grays"); 
 	resetMinAndMax; 
 	setSlice(5);
 	run("Magenta"); 
-	setMinAndMax(0, 2500);
+	setMinAndMax(0, 2000);
 	saveAs("TIFF", directory_path + File.separator + phaseStack + "-overlay.tif");
 }
 
