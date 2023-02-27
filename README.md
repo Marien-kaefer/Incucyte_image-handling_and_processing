@@ -14,7 +14,7 @@ Automatically process individual images in to time series stacks, including addi
 *	Open a phase stack. 
 *	Click “Run” in the script editor.
 *	The phase contrast stack is segmented and the mask stack is saved automatically in the same folder as the original stack. 
-
+*   The number of ROIs (cells) is counted for each time point and the results table is automatically saved in the same folder as the original stack.
 
 ## Proliferation_intensity-measurements.ijm
 * Download .ijm file and open via dragging and dropping into the Fiji main window. The script editor will open automatically.
