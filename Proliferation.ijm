@@ -10,7 +10,7 @@ ________________________________________________________________________________
 
 BSD 2-Clause License
 
-Copyright (c) [2022], [Marie Held {mheldb@liverpool.ac.uk}, Image Analyst Liverpool CCI (https://cci.liverpool.ac.uk/)]
+Written by Marie Held {mheldb@liverpool.ac.uk}, Image Analyst Liverpool CCI (https://cci.liverpool.ac.uk/)
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
@@ -23,7 +23,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 originalTitle = getTitle();
 originalTitleWithoutExtension = file_name_remove_extension(originalTitle); //remove extension from image title
-direcory_path = getDirectory("image");	//get directory path of image and use that later as direcoty for output files
+direcory_path = getDirectory("image");	//get directory path of image and use that later as directory for output files
 
 run("Mean...", "radius=1 stack");
 run("Bandpass Filter...", "filter_large=100 filter_small=10 suppress=None tolerance=5 autoscale saturate process");
@@ -33,11 +33,9 @@ run("Convert to Mask", "method=Default background=Light calculate black");
 run("Watershed", "stack");
 saveAs("Tiff", direcory_path + File.separator + originalTitleWithoutExtension + "_masks.tif");
 run("Analyze Particles...", "size=50.00-Infinity clear summarize add stack");
-//run("Analyze Particles...", "size=50.00-Infinity clear summarize add");
 
 IJ.renameResults(originalTitleWithoutExtension + "-Results");
 saveAs("Results", direcory_path + File.separator + originalTitleWithoutExtension + "_results.csv");
-
 
 
 function file_name_remove_extension(originalTitle){

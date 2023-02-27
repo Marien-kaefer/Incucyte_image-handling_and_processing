@@ -65,8 +65,7 @@ background_removal(fluorescenceStack, BG_removed_stack);
 //}
 
 assemble_final_hyperstack(phaseStack, fluorescenceStack, phaseMaskStack, BG_removed_stack, fluorescenseMaskStack, directory_path);
-selectWindow(fluorescenceStack); 
-close();
+
 
 function phase_segmentation_and_count(phaseStack, phaseMaskStack, directory_path,minimum_size_threshold){
 	selectWindow(phaseStack); 	
