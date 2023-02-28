@@ -14,7 +14,14 @@ Automatically process individual images in to time series stacks, including addi
 *	Open a phase stack. 
 *	Click “Run” in the script editor.
 *	The phase contrast stack is segmented and the mask stack is saved automatically in the same folder as the original stack. 
+    - The pre-processing steps include: 
+        * Mean filter with adjustable radius
+        * Bandpass filter with adjustable small and large filter sizes
+        * Global histogram threshold with choice of all filters available in Fiji
+        * Watershed option to split touching object, default is yes
+        * Connected component analysis (Particle Analyzer) with adjustable small and large object filter sizes
 *   The number of ROIs (cells) is counted for each time point and the results table is automatically saved in the same folder as the original stack.
+*   All windows are closed automatically following processing. 
 
 ## Proliferation_intensity-measurements.ijm
 * Download .ijm file and open via dragging and dropping into the Fiji main window. The script editor will open automatically.
