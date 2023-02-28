@@ -10,8 +10,6 @@ ________________________________________________________________________________
 
 BSD 2-Clause License
 
-Written by Marie Held {mheldb@liverpool.ac.uk}, Image Analyst Liverpool CCI (https://cci.liverpool.ac.uk/)
-
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
@@ -21,22 +19,36 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 */
 
+#@ String (label = "Mean filter size", value = 1, persist=true) mean_filter_size
+#@ String (label = "Bandpass filter - filter small structures up to (px) ", value = 10, persist=true) bandpass_small_structure_filter
+#@ String (label = "Bandpass filter - filter large structures down to (px) ", value = 100, persist=true) bandpass_large_structure_filter
+#@ String (choices={"Default", "Huang","Intermodes","IsoData","IJ_IsoData","Li","MaxEntropy","Mean","MinError","Minimum","Moments","Otsu","Percentile","RenyiEntropy","Shanbhag","Triangle","Yen"}, style="listBox") threshold_algorithm
+#@ String(choices={"Split objects via Watershed","Do not split objects"}, style="radioButtonHorizontal") watershed_selection
+#@ String (label = "Minimum object size to be considered a cell (calibrated unit^2) ", value = 50, persist=true) particle_analyzer_small_structure_filter
+#@ String (label = "Maximum object size to be considered a cell (calibrated unit^2) ", value = Infinity, persist=true) particle_analyzer_large_structure_filter
+
 originalTitle = getTitle();
 originalTitleWithoutExtension = file_name_remove_extension(originalTitle); //remove extension from image title
 direcory_path = getDirectory("image");	//get directory path of image and use that later as directory for output files
 
-run("Mean...", "radius=1 stack");
-run("Bandpass Filter...", "filter_large=100 filter_small=10 suppress=None tolerance=5 autoscale saturate process");
-setAutoThreshold("Default no-reset");
+run("Mean...", "radius=" + mean_filter_size + " stack");
+run("Bandpass Filter...", "filter_large=" + bandpass_large_structure_filter + " filter_small=" + bandpass_small_structure_filter + " suppress=None tolerance=5 autoscale saturate process");
+setAutoThreshold(threshold_algorithm + " no-reset");
 setOption("BlackBackground", true);
-run("Convert to Mask", "method=Default background=Light calculate black");
-run("Watershed", "stack");
+run("Convert to Mask", "method=" + threshold_algorithm + " background=Light calculate black");
+if (watershed_selection == "Split objects via Watershed") {
+	run("Watershed", "stack");
+}
+
 saveAs("Tiff", direcory_path + File.separator + originalTitleWithoutExtension + "_masks.tif");
-run("Analyze Particles...", "size=50.00-Infinity clear summarize add stack");
+run("Analyze Particles...", "size=" + particle_analyzer_small_structure_filter + "-" + particle_analyzer_large_structure_filter + " clear summarize add stack");
 
 IJ.renameResults(originalTitleWithoutExtension + "-Results");
 saveAs("Results", direcory_path + File.separator + originalTitleWithoutExtension + "_results.csv");
-
+run("Close");
+roiManager("reset");
+close("ROI Manager");
+close("*");
 
 function file_name_remove_extension(originalTitle){
 	dotIndex = lastIndexOf(originalTitle, "." ); 
@@ -44,3 +56,4 @@ function file_name_remove_extension(originalTitle){
 	//print( "Name without extension: " + file_name_without_extension );
 	return file_name_without_extension;
 }
+
