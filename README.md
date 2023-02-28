@@ -6,7 +6,7 @@ Automatically process individual images in to time series stacks, including addi
 * Download .ijm file and open via dragging and dropping into the Fiji main window. The script editor will open automatically. 
 * Open all time points of one channel for one image for one well in Fiji (select all in File Explorer and drag first time point into Fiji main window. All files will open). 
 * Click “Run” in the script editor. 
-* Select the appropriate magnification when prompted and click ok. 
+* Select the appropriate magnification when prompted and click ok. There is also an option to covert the images to 16-bit. 
 * The macro creates a stack with the correct order of dimensions and the selected calibration applied. The stack is automatically saved in the same folder as the original files. 
 
 ## Proliferation.ijm
