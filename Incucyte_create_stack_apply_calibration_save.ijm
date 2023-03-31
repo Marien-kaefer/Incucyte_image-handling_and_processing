@@ -28,7 +28,7 @@ Dialog.show();
 magnification = Dialog.getChoice();
 BitDepthConversionOption = Dialog.getCheckbox();
 
-if (magnification == "5x") {
+if (magnification == "4x") {
 	xy = 2.82;
 }
 if (magnification == "10x"){
