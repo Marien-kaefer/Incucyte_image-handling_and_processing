@@ -23,9 +23,12 @@ title = "Parameters";
 magnifications = newArray("5x", "10x", "20x");
 Dialog.create("Calibration Dialog");
 Dialog.addChoice("Magnification:", magnifications);
+Dialog.addNumber("Interval at which the series was taken (min)", 60);
 Dialog.addCheckbox("Convert to 16-bit", true);
+
 Dialog.show();
 magnification = Dialog.getChoice();
+interval = Dialog.getNumber();
 BitDepthConversionOption = Dialog.getCheckbox();
 
 if (magnification == "4x") {
@@ -54,5 +57,6 @@ if (BitDepthConversionOption == true && BitDepthOfImage != "16"){
 getDimensions(width, height, channels, slices, frames);
 
 Stack.setXUnit("micron");
-run("Properties...", "channels=1 slices=1 frames=" + slices + " pixel_width=" + xy + " pixel_height=" + xy + " voxel_depth=0");
+run("Properties...", "channels=1 slices=1 frames=" + slices + " pixel_width=" + xy + " pixel_height=" + xy + " voxel_depth=0 frame=[" + interval + " min]");
+
 saveAs("Tiff", direcory_path + File.separator + baseTitle + "-stack.tif");
