@@ -28,9 +28,12 @@ registeredStack = originalName + "-registered";
 direcory_path = getDirectory("image");
 
 run("Enhance Contrast", "saturated=0.35");
-run("Descriptor-based series registration (2d/3d + t)", originalName + " brightness_of=[Advanced ...] approximate_size=[Advanced ...] type_of_detections=[Minima only] subpixel_localization=[3-dimensional quadratic fit] transformation_model=[Translation (2d)] number_of_neighbors=3 redundancy=1 significance=3 allowed_error_for_ransac=5 global_optimization=[All-to-all matching with range ('reasonable' global optimization)] range=5 choose_registration_channel=1 image=[Fuse and display] interpolation=[Linear Interpolation] detection_sigma=9.4110 threshold=0.0063");
+run("Descriptor-based series registration (2d/3d + t)");
+//run("Descriptor-based series registration (2d/3d + t)", originalName + " brightness_of=[Interactive ...] approximate_size=[Interactive ...] type_of_detections=[Interactive ...] subpixel_localization=[3-dimensional quadratic fit] transformation_model=[Translation (2d)] number_of_neighbors=6 redundancy=3 significance=3 allowed_error_for_ransac=5 global_optimization=[Consecutive matching of images (no global optimization)] range=5 choose_registration_channel=1 image=[Fuse and display] interpolation=[Linear Interpolation]");
+//run("Descriptor-based series registration (2d/3d + t)", originalName + " brightness_of=[Advanced ...] approximate_size=[Advanced ...] type_of_detections=[Minima only] subpixel_localization=[3-dimensional quadratic fit] transformation_model=[Translation (2d)] number_of_neighbors=3 redundancy=1 significance=3 allowed_error_for_ransac=5 global_optimization=[All-to-all matching with range ('reasonable' global optimization)] range=5 choose_registration_channel=1 image=[Fuse and display] interpolation=[Linear Interpolation] detection_sigma=9.4110 threshold=0.0063");
 rename(registeredStack); 
 run("Z Project...", "projection=[Min Intensity]");
+run("Duplicate...", " ");
 setAutoThreshold("Default dark no-reset");
 //run("Threshold...");
 setThreshold(1, 65535, "raw");
@@ -49,12 +52,18 @@ getDimensions(width, height, channels, slices, frames);
 Stack.setXUnit(pixel_unit);
 
 Dialog.create("What is the time interval at which the series was taken?");
-Dialog.addNumber("Interval at which the series was taken (min)", 10);
+Dialog.addNumber("Interval at which the series was taken (min)", 0);
 Dialog.show();
 interval = Dialog.getNumber();
 
-
 run("Properties...", "channels=" + channels + " slices=" + slices + " frames=" + frames + " pixel_width=" + pixel_calibration + " pixel_height=" + pixel_calibration + " voxel_depth=1 frame=[" + interval + " min]");
+
+for (i = 1; i < channels; i++) {
+	Stack.setChannel(i);
+	//run("Brightness/Contrast...");
+	resetMinAndMax();
+}
+
 
 saveAs("Tiff", direcory_path + File.separator + registeredStack + "-cropped.tif");
 segmentation_input = getTitle();
