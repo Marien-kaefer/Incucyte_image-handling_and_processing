@@ -24,7 +24,6 @@ getVoxelSize(width, height, depth, unit);
 frameInterval=Stack.getFrameInterval();
 Stack.getUnits(X, Y, Z, Time, Value); // Returns the x, y, z, time and value units. Requires v1.45h.  
 time_unit = Time; 
-print(time_unit); 
 pixel_calibration = width; 
 pixel_unit = unit;
 originalName = file_name_remove_extension(originalTitle); 
