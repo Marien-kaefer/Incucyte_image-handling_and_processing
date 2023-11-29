@@ -2,7 +2,7 @@
 Macro to generate a time series stack from individual images exported from an Incucyte. Select images from one channel only. Image scaling is applied automatically via drop down menu of magnification selection. Option to convert to 16 bit. 
 
 INSTRUCTIONS: 
-Open all images to be included into one stack by selecting them all in the file explorer and dragging them onto the main Fiji window. Then hit "Run" below. 
+Open time series and click "Run" below. 
 
 												- Written by Marie Held [mheldb@liverpool.ac.uk] May 2023
 												  Liverpool CCI (https://cci.liverpool.ac.uk/)
@@ -21,6 +21,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 originalTitle = getTitle();
 getVoxelSize(width, height, depth, unit); 
+frameInterval=Stack.getFrameInterval();
+Stack.getUnits(X, Y, Z, Time, Value); // Returns the x, y, z, time and value units. Requires v1.45h.  
+time_unit = Time; 
+print(time_unit); 
 pixel_calibration = width; 
 pixel_unit = unit;
 originalName = file_name_remove_extension(originalTitle); 
@@ -51,12 +55,14 @@ run("Enhance Contrast", "saturated=0.35");
 getDimensions(width, height, channels, slices, frames);
 Stack.setXUnit(pixel_unit);
 
+/*
 Dialog.create("What is the time interval at which the series was taken?");
 Dialog.addNumber("Interval at which the series was taken (min)", 0);
 Dialog.show();
 interval = Dialog.getNumber();
+*/
+run("Properties...", "channels=" + channels + " slices=" + slices + " frames=" + frames + " pixel_width=" + pixel_calibration + " pixel_height=" + pixel_calibration + " voxel_depth=1 frame=[" + frameInterval + " " + Time+"]");
 
-run("Properties...", "channels=" + channels + " slices=" + slices + " frames=" + frames + " pixel_width=" + pixel_calibration + " pixel_height=" + pixel_calibration + " voxel_depth=1 frame=[" + interval + " min]");
 
 for (i = 1; i < channels; i++) {
 	Stack.setChannel(i);
