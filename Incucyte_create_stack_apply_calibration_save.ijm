@@ -20,7 +20,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 title = "Parameters";
-magnifications = newArray("5x", "10x", "20x");
+magnifications = newArray("4x", "10x", "20x");
 Dialog.create("Calibration Dialog");
 Dialog.addChoice("Magnification:", magnifications);
 Dialog.addNumber("Interval at which the series was taken (min)", 60);
@@ -31,7 +31,7 @@ magnification = Dialog.getChoice();
 interval = Dialog.getNumber();
 BitDepthConversionOption = Dialog.getCheckbox();
 
-if (magnification == "5x") {
+if (magnification == "4x") {
 	xy = 2.82;
 }
 if (magnification == "10x"){
