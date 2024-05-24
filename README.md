@@ -2,6 +2,21 @@
 
 Automatically process individual images in to time series stacks, including adding the correct calibration depending on used magnification. This applies to an Incucyte S3. 
 
+
+## Incucyte_create_stack_apply_calibration_save_BATCH.ijm
+* Download .ijm file and open via dragging and dropping into the Fiji main window. The script editor will open automatically. 
+* Click “Run” in the script editor. 
+* Specify the folder in which all the images of one channel of an experiment are located. All files will be processed. 
+* In the next dialog window spedify the following parameters: 
+	* magnification 
+	* time interval (min) between images, 
+	* images per well, 
+	* number of time points of experiment 
+	* option to covert the images to 16-bit. 
+* The macro creates a stack with the correct order of dimensions, the selected calibration applied and time interval applied. 
+* An output folder called "stacks" is automatically created within the input folder in which the generated stacks are saved automatically. 
+
+
 ## Incucyte_create_stack_apply_calibration_save.ijm
 * Download .ijm file and open via dragging and dropping into the Fiji main window. The script editor will open automatically. 
 * Open all time points of one channel for one image for one well in Fiji (select all in File Explorer and drag first time point into Fiji main window. All files will open). 
